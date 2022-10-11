@@ -116,7 +116,7 @@
   })
 
   export default {
-    name: 'TableList',
+    name: 'Host',
     components: {
       STable,
       CreateForm,
@@ -165,11 +165,11 @@
       // 新建或配置
       handleAddOrEdit (record) {
         this.visible = true
-        this.mdl = record ? { ...record } : null
+        this.mdl = record || null
       },
       // 详细信息
       handleToggleDetail (record) {
-        this.detailInfo = record ? { ...record } : null
+        this.detailInfo = record || null
         this.detailVisible = !!record
       },
       // 新建/配置表单提交
@@ -186,7 +186,7 @@
                 form.resetFields()
                 // 刷新表格
                 this.$refs.table.refresh()
-                this.$message.success(values.name ? '修改成功' : '新增成功')
+                this.$message.info(values.name ? '修改成功' : '新增成功')
               } else {
                 this.confirmLoading = false
                 this.$message.error(values.name ? '修改失败' : '新增失败')
@@ -234,7 +234,7 @@
             this.$refs.table.clearSelected()
             // 刷新表格
             this.$refs.table.refresh()
-            this.$message.success(`${operMap[type]}成功`)
+            this.$message.info(`${operMap[type]}成功`)
           } else {
             this.$message.error(`${operMap[type]}失败`)
           }

@@ -4,12 +4,12 @@
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
-    @ok="() => { $emit('ok') }"
-    @cancel="() => { $emit('cancel') }"
+    @ok="$emit('ok')"
+    @cancel="$emit('cancel')"
   >
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="formLayout">
-        <!-- 检查是否有 id 并且大于0，大于0是修改。其他是新增，新增不显示主键ID -->
+        <!-- 检查是否有 id 并且大于0，大于0是修改其他是新增，新增不显示主键ID -->
         <a-form-item v-show="false" label="主键ID" disabled>
           <a-input v-decorator="['id', { initialValue: 0 }]" />
         </a-form-item>
@@ -19,9 +19,9 @@
         <a-form-item label="角色说明">
           <a-input v-decorator="['describe', {rules: [{required: true, min: 1, message: '请输入角色说明'}]}]" />
         </a-form-item>
-        <a-form-item label="是否默认">
+        <!-- <a-form-item label="是否默认">
           <a-switch v-decorator="['status', { valuePropName: 'checked', initialValue: 0, getValueProps: value => ({ checked: value === 1 }), getValueFromEvent: value => { return value ? 1 : 0 }}]" />
-        </a-form-item>
+        </a-form-item> -->
       </a-form>
     </a-spin>
   </a-modal>
@@ -31,7 +31,8 @@
 import pick from 'lodash.pick'
 
 // 表单字段
-const fields = ['id', 'name', 'describe', 'status']
+// const fields = ['id', 'name', 'describe', 'status']
+const fields = ['id', 'name', 'describe']
 
 export default {
   props: {

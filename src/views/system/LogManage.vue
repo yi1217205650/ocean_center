@@ -185,7 +185,7 @@
   }
 
   export default {
-    name: 'TableList',
+    name: 'LogManage',
     components: {
       STable,
       Ellipsis

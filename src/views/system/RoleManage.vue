@@ -53,18 +53,20 @@
     <RolePermissionDrawer
       :roleVisible="roleVisible"
       :model="roleInfo"
-      :menuList="menuList"
       :menuListTree="menuListTree"
-      @drawClose="handleToggleMenu(null)" >
+      :childList="childList"
+      @drawClose="handleToggleMenu"
+      @refreshTable="refreshTable"
+    >
     </RolePermissionDrawer>
   </a-card>
 </template>
 <script>
+  import { Modal } from 'ant-design-vue'
   import { STable, Ellipsis } from '@/components'
   import { RoleForm, RolePermissionDrawer } from './modules'
   import { getRoleList, addRole, updateRole, deleteRole, getMenuList } from '@/api/system'
   import { roleColumns } from './modules/columnsData'
-  import { Modal } from 'ant-design-vue'
   import { listToTree } from '@/router/generator-routers'
 
   const newTableData = []
@@ -72,7 +74,7 @@
   let nextIndex = 0
 
   export default {
-    name: 'TableList',
+    name: 'RoleManage',
     components: {
       STable,
       Ellipsis,
@@ -89,7 +91,6 @@
         // 加载数据方法 必须为 Promise 对象
         loadData: parameter => {
           const requestParameters = Object.assign({}, parameter)
-          console.log('loadData request parameters:', requestParameters)
           return getRoleList(requestParameters)
             .then(res => {
               res.pageNo = 1
@@ -103,15 +104,17 @@
         roleVisible: false,
         roleInfo: null,
         // 菜单列表
-        menuList: [],
-        menuListTree: []
+        menuListTree: [],
+        childList: []
       }
     },
     created () {
       getMenuList().then(res => {
         const tree = []
         listToTree(res.data, tree, 0)
-        this.menuList = tree
+        this.childList = []
+        this.getChildMap(tree, this.childList)
+
         this.dataFilter(tree)
         newTableData[newTableData.length - sum].rowSpan = sum
         this.menuListTree = newTableData
@@ -134,7 +137,26 @@
       }
     },
     methods: {
-      // 递归处理后台数据
+      refreshTable () {
+        this.$refs.table.refresh()
+      },
+      // 获取所有带子菜单的映射关系
+      getChildMap (list, arr) {
+        list.forEach(item => {
+          if (item.children && item.children.length > 0) {
+              const childitem = {
+                id: item.id,
+                childId: []
+              }
+              item.children.forEach(child => {
+                childitem.childId.push(child.id)
+              })
+              this.getChildMap(item.children, arr)
+              arr.push(childitem)
+          }
+        })
+      },
+      // 格式化后台返回的菜单列表适配表格
       dataFilter (arr = [], module = '', parentId = '', page = '', count = 0) {
         arr.forEach((item, index) => {
           if (count === 0) {
@@ -147,12 +169,12 @@
           }
           const name = this.$t(item.title)
           if (item.children && item.children.length > 0) {
-              // const newPid = parentId + item.parentId + '-'
-              this.dataFilter(item.children, module, parentId + item.parentId + '-', count === 0 ? '' : page + name + '-', count + 1)
+              this.dataFilter(item.children, module, item.parentId === 0 ? '' : parentId + item.parentId + '-', count === 0 ? '' : page + name + '-', count + 1)
           } else {
               sum += 1
               newTableData.push({
                   module: module,
+                  name: item.name,
                   page: page + name,
                   actions: item.actions || [],
                   id: item.id,
@@ -174,7 +196,6 @@
         this.confirmLoading = true
         form.validateFields((errors, values) => {
           if (!errors) {
-            console.log('values', values)
             const type = values.id ? 2 : 1
             this.handleItemOper(type, values)
           } else {
@@ -213,6 +234,12 @@
             fun: updateRole
           }
         ]
+        if (type === 2) {
+          const { name, describe } = { ...param }
+          param = this.mdl
+          param.name = name
+          param.describe = describe
+        }
         funArr[type].fun(param).then(res => {
           if (type === 0) {
             this.$refs.table.clearSelected()
@@ -225,10 +252,11 @@
           }
           // 刷新表格
           this.$refs.table.refresh()
-          this.$message.success(`${funArr[type].title}成功`)
+          this.$message.info(`${funArr[type].title}成功`)
         }).catch(err => {
           console.log(err)
-          this.$message.success(`${funArr[type].title}失败`)
+          this.confirmLoading = false
+          this.$message.info(`${funArr[type].title}失败`)
         })
       },
       // 添加或编辑点击取消
@@ -243,8 +271,8 @@
         this.selectedRows = selectedRows
       },
       // 显示菜单权限
-      handleToggleMenu (record) {
-        this.roleInfo = record ? { ...record } : null
+      handleToggleMenu (record = null) {
+        this.roleInfo = record || null
         this.roleVisible = !!record
       }
     }

@@ -79,7 +79,7 @@
           <a @click="handleItemOper(record.status+1, record)">{{ record.status ? '禁用' : '启用' }}</a>
           <a-divider type="vertical" />
           <a @click="handleItemOper(0, record)" class="color-red">删除</a>
-      </template>
+        </template>
       </span>
     </s-table>
 
@@ -107,7 +107,7 @@
   const operMap = ['删除', '启用', '禁用']
 
   export default {
-    name: 'TableList',
+    name: 'UserManage',
     components: {
       STable,
       Ellipsis,
@@ -165,7 +165,7 @@
           title: `${operMap[type]}提示`,
           content: `确定${operMap[type]}${user}吗？`,
           onOk: () => {
-            this.$message.success(`${operMap[type]}成功`)
+            this.$message.info(`${operMap[type]}成功`)
           },
           onCancel () {}
         })

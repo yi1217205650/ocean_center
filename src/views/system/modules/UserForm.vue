@@ -19,7 +19,7 @@
           :before-upload="beforeUpload"
           @change="handleChange"
         >
-          <a-avatar :size='120' :src="model.avatar" />
+          <a-avatar :size="120" :src="model.avatar" />
         </a-upload>
         <div class="avatarEditBox">
           <div class="avatarEdit">编辑</div>

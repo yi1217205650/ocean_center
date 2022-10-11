@@ -69,13 +69,13 @@ const roleColumns = [
     title: '角色说明',
     dataIndex: 'describe'
   },
-  {
-    title: '默认',
-    dataIndex: 'status',
-    width: '100px',
-    align: 'center',
-    scopedSlots: { customRender: 'isDefault' }
-  },
+  // {
+  //   title: '默认',
+  //   dataIndex: 'status',
+  //   width: '100px',
+  //   align: 'center',
+  //   scopedSlots: { customRender: 'isDefault' }
+  // },
   {
     title: '添加时间',
     dataIndex: 'created_at'
@@ -89,4 +89,31 @@ const roleColumns = [
   }
 ]
 
-export { roleList, userColumns, statusList, roleColumns }
+const roleDrawColumns = [
+  {
+    title: '模块',
+    dataIndex: 'module',
+    width: '100px',
+    customRender: (value, row, index) => {
+      const obj = {
+        children: value,
+        attrs: {
+          rowSpan: row.rowSpan
+        }
+      }
+      return obj
+    }
+  },
+  {
+    title: '页面',
+    dataIndex: 'page',
+    scopedSlots: { customRender: 'page' }
+  },
+  {
+    title: '功能',
+    dataIndex: 'actions',
+    scopedSlots: { customRender: 'actions' }
+  }
+]
+
+export { roleList, userColumns, statusList, roleColumns, roleDrawColumns }

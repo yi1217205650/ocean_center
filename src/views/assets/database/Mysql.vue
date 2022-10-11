@@ -164,7 +164,7 @@
 import { baseMixin } from '@/store/app-mixin'
 
 export default {
-  name: 'Advanced',
+  name: 'Mysql',
   mixins: [baseMixin],
   data () {
     return {

@@ -11,23 +11,32 @@
       :style="{ marginBottom: '50px' }"
       :columns="columns"
       :data-source="menuListTree"
-      rowKey="page"
+      rowKey="id"
       :pagination="false"
       bordered
     >
+      <!-- 页面 -->
       <span slot="page" slot-scope="text, record">
         <template>
-          <a-checkbox :checked="record.checked == 1" @change="onCheckBoxChange(record,$event)">
+          <a-checkbox
+            :checked="checkMenuCheck(record.id)"
+            @change="onMenuCheck(record,$event)"
+          >
             {{ text }}
           </a-checkbox>
         </template>
       </span>
-      <span slot="actions" slot-scope="text">
+      <!-- 功能 -->
+      <span slot="actions" slot-scope="text, record">
         <template>
           <a-row>
             <a-col :span="8" v-for="(item, index) in text" :key="index">
-              <a-checkbox :checked="item.checked" @change="onActionCheck(item,$event)">
-                {{ item.name }}
+              <a-checkbox
+                :checked="checkActionCheck(record.name, item.id)"
+                @change="onActionCheck(record.name, item.id, $event)"
+                :disabled="!checkMenuCheck(record.id)"
+              >
+                {{ item.describe }}
               </a-checkbox>
             </a-col>
           </a-row>
@@ -50,40 +59,16 @@
       <a-button :style="{ marginRight: '8px' }" @click="$emit('drawClose')">
         取消
       </a-button>
-      <a-button type="primary" @click="onhandleSubmit">
+      <a-button type="primary" @click="onhandleSubmit" :loading="loading">
         确定
       </a-button>
     </div>
   </a-drawer>
 </template>
 <script>
-  const columns = [
-    {
-      title: '模块',
-      dataIndex: 'module',
-      width: '100px',
-      customRender: (value, row, index) => {
-        const obj = {
-          children: value,
-          attrs: {
-            rowSpan: row.rowSpan
-          }
-        }
-        return obj
-      }
-    },
-    {
-      title: '页面',
-      dataIndex: 'page',
-      scopedSlots: { customRender: 'page' }
-      // width: '120px'
-    },
-    {
-      title: '功能',
-      dataIndex: 'actions',
-      scopedSlots: { customRender: 'actions' }
-    }
-  ]
+  import { roleDrawColumns } from './columnsData'
+  import { updateRole } from '@/api/system'
+
   export default {
     props: {
         roleVisible: {
@@ -94,51 +79,194 @@
           type: Object,
           default: () => null
         },
-        menuList: {
+        // 总菜单树
+        menuListTree: {
           type: Array,
           default: () => []
         },
-        menuListTree: {
+        // 父子菜单映射表
+        childList: {
           type: Array,
           default: () => []
         }
     },
     data () {
-      this.columns = columns
+      this.columns = roleDrawColumns
       return {
-        selectMenuId: []
+        loading: false,
+        selectMenuId: [], // 选中的菜单id
+        selectAction: [] // 选中的action
       }
     },
     created () {
       // 当 model 发生改变时，为表单设置值
       this.$watch('model', () => {
-        if (this.model && this.model.menus.length > 0) {
-          // 遍历出用户有的所有菜单
-          this.model.menus.forEach(item => {
-            this.selectMenuId.push(item.id)
-          })
-          // 角色拥有的菜单和全部菜单匹配
-          this.menuListTree.forEach(item => {
-            item.checked = this.selectMenuId.indexOf(item.id) !== -1
-          })
-          console.log(this.menuList)
-          console.log(this.menuListTree)
-        }
+        this.handleInitData()
       })
     },
     methods: {
-      onCheckBoxChange (record, event) {
-        const checked = event.target.checked ? 1 : 0
-        console.log(checked, record)
+      handleInitData () {
+        this.selectMenuId = []
+        this.selectAction = []
+        if (this.model) {
+          // 遍历角色的菜单
+          if (this.model.menus.length > 0) {
+            this.model.menus.forEach(item => {
+              this.selectMenuId.push(item.id)
+            })
+          }
+          // 遍历出角色的actions
+          if (this.model.permissions.length > 0) {
+            this.model.permissions.forEach(item => {
+              if (item.actions && item.actions.length > 0) {
+                const actionIds = []
+                item.actions.forEach(action => {
+                  actionIds.push(action.id)
+                })
+                this.selectAction.push({
+                  name: item.permissionId,
+                  actions: actionIds
+                })
+              }
+            })
+          }
+        }
+      },
+      // 判断菜单是否选中
+      checkMenuCheck (id) {
+        return this.selectMenuId.indexOf(id) !== -1
+      },
+      // 点击选择菜单
+      onMenuCheck (record, event) {
+        const checked = event.target.checked
+        const parent = record.parentId !== 0 ? record.parentId.split('-') : []
+        if (checked) {
+          parent.forEach(item => {
+            item = parseInt(item)
+            if (this.selectMenuId.indexOf(item) === -1) {
+              this.selectMenuId.push(item)
+            }
+          })
+          this.selectMenuId.push(record.id)
+        } else {
+          this.removeMenuId(record.id)
+          this.removeActions(record.name)
+          parent.reverse()
+          for (let index = 0; index < parent.length; index++) {
+            const element = parent[index]
+            if (this.queryChildCheck(element)) {
+              break
+            } else {
+              // 子元素都没有选中的 则移除自己
+              this.removeMenuId(element)
+            }
+          }
+        }
+      },
+      // 根据id查询子菜单是否有选中的
+      queryChildCheck (id) {
+        id = parseInt(id)
+        let child = []
+        for (let index = 0; index < this.childList.length; index++) {
+          if (this.childList[index].id === id) {
+              child = this.childList[index].childId
+              break
+          }
+        }
+        // 拿到父元素的所有子元素 并判断是否有选中的
+        let hasChild = false
+        child.forEach(item => {
+          if (this.selectMenuId.indexOf(item) !== -1) {
+            hasChild = true
+          }
+        })
+        return hasChild
+      },
+      // 移除选中的ID
+      removeMenuId (id) {
+        const index = this.selectMenuId.indexOf(id)
+        if (index !== -1) {
+          this.selectMenuId.splice(index, 1)
+        }
+      },
+      // 检查action是否选中
+      checkActionCheck (name, id) {
+        let ischeck = false
+        for (let index = 0; index < this.selectAction.length; index++) {
+          const element = this.selectAction[index]
+          if (element.name === name) {
+              ischeck = element.actions.indexOf(id) !== -1
+              break
+          }
+        }
+        return ischeck
       },
       // action处理
-      onActionCheck (record, event) {
-        const checked = event.target.checked ? 1 : 0
-        record.checked = checked
+      onActionCheck (name, id, event) {
+        const checked = event.target.checked
+        let selIndex = -1
+        for (let index = 0; index < this.selectAction.length; index++) {
+          const element = this.selectAction[index]
+          if (element.name === name) {
+              selIndex = index
+              break
+          }
+        }
+        if (checked) {
+          if (selIndex === -1) {
+            this.selectAction.push({
+              name: name,
+              actions: [id]
+            })
+          } else {
+            this.selectAction[selIndex].actions.push(id)
+          }
+        } else {
+          if (selIndex !== -1) {
+            const actionInd = this.selectAction[selIndex].actions.indexOf(id)
+            this.selectAction[selIndex].actions.splice(actionInd, 1)
+          }
+        }
       },
+      // 根据菜单名移除该菜单的actions
+      removeActions (name) {
+        this.selectAction = this.selectAction.filter(item => {
+          return item.name !== name
+        })
+      },
+      // 修改菜单
       onhandleSubmit () {
-        console.log(this.selectMenuId)
-        console.log('提交修改')
+        this.loading = true
+        const param = this.model
+        // 菜单id
+        const ids = this.selectMenuId.map(item => {
+          return { id: item }
+        })
+        param.menus = ids
+
+        // action id
+        const permissionsList = this.selectAction.map(item => {
+          const actions = []
+          item.actions.forEach(action => {
+            actions.push({ id: action })
+          })
+          return {
+            permissionId: item.name,
+            permissionName: item.name,
+            actions: actions
+          }
+        })
+        param.permissions = permissionsList
+        updateRole(param).then(res => {
+          this.loading = false
+          this.$message.info('修改成功')
+          this.$emit('drawClose')
+          this.$emit('refreshTable')
+        }).catch(err => {
+          this.loading = false
+          console.log(err)
+          this.$message.info('修改失败')
+        })
       }
     }
   }
