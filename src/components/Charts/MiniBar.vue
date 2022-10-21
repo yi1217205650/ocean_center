@@ -1,7 +1,7 @@
 <template>
   <div class="antv-chart-mini">
     <div class="chart-wrapper" :style="{ height: 46 }">
-      <v-chart :force-fit="true" :height="height" :data="data" :padding="[36, 5, 18, 5]">
+      <v-chart :force-fit="true" :height="height" :data="data" :padding="[36, 5, 18, 5]" :scale="scale">
         <v-tooltip />
         <v-bar position="x*y" />
       </v-chart>
@@ -11,16 +11,15 @@
 
 <script>
 import moment from 'moment'
+import { getRandomBetween } from '@/utils/util'
 const data = []
-const beginDay = new Date().getTime()
 
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 7; i++) {
   data.push({
-    x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
-    y: Math.round(Math.random() * 10)
+    x: moment().subtract((6 - i), 'days').format('MM-DD'),
+    y: getRandomBetween(600, 800)
   })
 }
-
 const tooltip = [
   'x*y',
   (x, y) => ({
@@ -30,13 +29,8 @@ const tooltip = [
 ]
 
 const scale = [{
-  dataKey: 'x',
-  min: 2
-}, {
   dataKey: 'y',
-  title: '时间',
-  min: 1,
-  max: 30
+  alias: '设备数'
 }]
 
 export default {

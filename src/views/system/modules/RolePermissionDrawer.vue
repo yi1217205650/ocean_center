@@ -5,7 +5,7 @@
     :visible="roleVisible"
     @close="$emit('drawClose')"
     width="60%"
-    title="菜单权限设置"
+    :title="(model ? model.name : '') + '-菜单权限设置'"
   >
     <a-table
       :style="{ marginBottom: '50px' }"
@@ -43,6 +43,7 @@
         </template>
       </span>
     </a-table>
+    <!-- 底部按钮组 -->
     <div
       :style="{
         position: 'absolute',
@@ -109,27 +110,34 @@
         this.selectMenuId = []
         this.selectAction = []
         if (this.model) {
+          if (this.model.permissions.length === 0) {
+            this.model.permissions = [
+              {
+                menus: []
+              }
+            ]
+          }
           // 遍历角色的菜单
-          if (this.model.menus.length > 0) {
-            this.model.menus.forEach(item => {
+          if (this.model.permissions[0].menus.length > 0) {
+            this.model.permissions[0].menus.forEach(item => {
               this.selectMenuId.push(item.id)
             })
           }
           // 遍历出角色的actions
-          if (this.model.permissions.length > 0) {
-            this.model.permissions.forEach(item => {
-              if (item.actions && item.actions.length > 0) {
-                const actionIds = []
-                item.actions.forEach(action => {
-                  actionIds.push(action.id)
-                })
-                this.selectAction.push({
-                  name: item.permissionId,
-                  actions: actionIds
-                })
-              }
-            })
-          }
+          // if (this.model.permissions.length > 0) {
+          //   this.model.permissions.forEach(item => {
+          //     if (item.actions && item.actions.length > 0) {
+          //       const actionIds = []
+          //       item.actions.forEach(action => {
+          //         actionIds.push(action.id)
+          //       })
+          //       this.selectAction.push({
+          //         name: item.permissionId,
+          //         actions: actionIds
+          //       })
+          //     }
+          //   })
+          // }
         }
       },
       // 判断菜单是否选中
@@ -242,21 +250,21 @@
         const ids = this.selectMenuId.map(item => {
           return { id: item }
         })
-        param.menus = ids
+        param.permissions[0].menus = ids
 
-        // action id
-        const permissionsList = this.selectAction.map(item => {
-          const actions = []
-          item.actions.forEach(action => {
-            actions.push({ id: action })
-          })
-          return {
-            permissionId: item.name,
-            permissionName: item.name,
-            actions: actions
-          }
-        })
-        param.permissions = permissionsList
+        // // action id
+        // const permissionsList = this.selectAction.map(item => {
+        //   const actions = []
+        //   item.actions.forEach(action => {
+        //     actions.push({ id: action })
+        //   })
+        //   return {
+        //     permissionId: item.name,
+        //     permissionName: item.name,
+        //     actions: actions
+        //   }
+        // })
+        // param.permissions = permissionsList
         updateRole(param).then(res => {
           this.loading = false
           this.$message.info('修改成功')

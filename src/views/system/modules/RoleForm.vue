@@ -74,7 +74,7 @@ export default {
     fields.forEach(v => this.form.getFieldDecorator(v))
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
-      console.log('编辑角色', this.model)
+      console.log('新增/编辑角色', this.model)
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
   }

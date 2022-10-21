@@ -12,43 +12,6 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
-    roleList: [
-      {
-        name: 'admin',
-        text: '管理员',
-        isDefault: 0
-      },
-      {
-        name: 'devops',
-        text: '运维开发',
-        isDefault: 0
-      },
-      {
-        name: 'super',
-        text: '超级管理员',
-        isDefault: 0
-      },
-      {
-        name: 'supplier',
-        text: '供应商',
-        isDefault: 0
-      },
-      {
-        name: 'recruit',
-        text: '招募团队',
-        isDefault: 0
-      },
-      {
-        name: 'product',
-        text: '产品组',
-        isDefault: 0
-      },
-      {
-        name: 'customer',
-        text: '客户',
-        isDefault: 1
-      }
-    ],
     info: {}
   },
 
@@ -85,13 +48,9 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response
-          if (result.code !== 0) {
-            reject(result)
-            return
-          }
           storage.set(ACCESS_TOKEN, result.token, new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
-          resolve()
+          resolve(result)
         }).catch(error => {
           reject(error)
         })
@@ -104,116 +63,120 @@ const user = {
         // 请求后端获取用户信息
         getInfo().then(response => {
           const result = response.data
+          commit('SET_INFO', result)
+          commit('SET_NAME', { name: result.name, welcome: welcome() })
+          commit('SET_AVATAR', result.avatar)
+          resolve(result)
           // result.role = result.roles[0]
-          result.role = {
-            id: 'admin',
-            name: '管理员',
-            describe: '拥有所有权限',
-            status: 1,
-            creatorId: 'system',
-            createTime: 1497160610259,
-            deleted: 0,
-            permissions: [
-              {
-                roleId: 'admin',
-                permissionId: 'dashboard',
-                permissionName: '仪表大盘',
-                actions:
-                  '[{"action":"add","defaultCheck":false,"describe":"新增"},{"action":"query","defaultCheck":false,"describe":"查询"},{"action":"get","defaultCheck":false,"describe":"详情"},{"action":"update","defaultCheck":false,"describe":"修改"},{"action":"delete","defaultCheck":false,"describe":"删除"}]',
-                actionEntitySet: [
-                  {
-                    action: 'add',
-                    describe: '新增',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'query',
-                    describe: '查询',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'get',
-                    describe: '详情',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'update',
-                    describe: '修改',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'delete',
-                    describe: '删除',
-                    defaultCheck: false
-                  }
-                ],
-                actionList: null,
-                dataAccess: null
-              },
-              {
-                roleId: 'admin',
-                permissionId: 'host',
-                permissionName: '主机管理',
-                actions:
-                  '[{"action":"add","defaultCheck":false,"describe":"新增"},{"action":"edit","defaultCheck":false,"describe":"编辑"},{"action":"query","defaultCheck":false,"describe":"查询"},{"action":"get","defaultCheck":false,"describe":"详情"},{"action":"update","defaultCheck":false,"describe":"修改"},{"action":"delete","defaultCheck":false,"describe":"删除"}]',
-                actionEntitySet: [
-                  {
-                    action: 'add',
-                    describe: '新增',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'edit',
-                    describe: '编辑',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'query',
-                    describe: '查询',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'get',
-                    describe: '详情',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'update',
-                    describe: '修改',
-                    defaultCheck: false
-                  },
-                  {
-                    action: 'delete',
-                    describe: '删除',
-                    defaultCheck: false
-                  }
-                ],
-                actionList: null,
-                dataAccess: null
-              }
-            ]
-          }
-          if (result.role && result.role.permissions.length > 0) {
-            const role = { ...result.role }
-            role.permissions = result.role.permissions.map(permission => {
-              const per = {
-                ...permission,
-                actionList: (permission.actionEntitySet || {}).map(item => item.action)
-               }
-              return per
-            })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            // 覆盖响应体的 role, 供下游使用
-            result.role = role
-            commit('SET_ROLES', role)
-            commit('SET_INFO', result)
-            commit('SET_NAME', { name: result.name, welcome: welcome() })
-            commit('SET_AVATAR', result.avatar)
-            // 下游
-            resolve(result)
-          } else {
-            reject(new Error('getInfo: roles must be a non-null array !'))
-          }
+          // result.role = {
+          //   id: 'admin',
+          //   name: '管理员',
+          //   describe: '拥有所有权限',
+          //   status: 1,
+          //   creatorId: 'system',
+          //   createTime: 1497160610259,
+          //   deleted: 0,
+          //   permissions: [
+          //     {
+          //       roleId: 'admin',
+          //       permissionId: 'dashboard',
+          //       permissionName: '仪表大盘',
+          //       actions:
+          //         '[{"action":"add","defaultCheck":false,"describe":"新增"},{"action":"query","defaultCheck":false,"describe":"查询"},{"action":"get","defaultCheck":false,"describe":"详情"},{"action":"update","defaultCheck":false,"describe":"修改"},{"action":"delete","defaultCheck":false,"describe":"删除"}]',
+          //       actionEntitySet: [
+          //         {
+          //           action: 'add',
+          //           describe: '新增',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'query',
+          //           describe: '查询',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'get',
+          //           describe: '详情',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'update',
+          //           describe: '修改',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'delete',
+          //           describe: '删除',
+          //           defaultCheck: false
+          //         }
+          //       ],
+          //       actionList: null,
+          //       dataAccess: null
+          //     },
+          //     {
+          //       roleId: 'admin',
+          //       permissionId: 'host',
+          //       permissionName: '主机管理',
+          //       actions:
+          //         '[{"action":"add","defaultCheck":false,"describe":"新增"},{"action":"edit","defaultCheck":false,"describe":"编辑"},{"action":"query","defaultCheck":false,"describe":"查询"},{"action":"get","defaultCheck":false,"describe":"详情"},{"action":"update","defaultCheck":false,"describe":"修改"},{"action":"delete","defaultCheck":false,"describe":"删除"}]',
+          //       actionEntitySet: [
+          //         {
+          //           action: 'add',
+          //           describe: '新增',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'edit',
+          //           describe: '编辑',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'query',
+          //           describe: '查询',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'get',
+          //           describe: '详情',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'update',
+          //           describe: '修改',
+          //           defaultCheck: false
+          //         },
+          //         {
+          //           action: 'delete',
+          //           describe: '删除',
+          //           defaultCheck: false
+          //         }
+          //       ],
+          //       actionList: null,
+          //       dataAccess: null
+          //     }
+          //   ]
+          // }
+          // if (result.role && result.role.permissions.length > 0) {
+          //   const role = { ...result.role }
+          //   role.permissions = result.role.permissions.map(permission => {
+          //     const per = {
+          //       ...permission,
+          //       actionList: (permission.actionEntitySet || {}).map(item => item.action)
+          //      }
+          //     return per
+          //   })
+          //   role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+          //   // 覆盖响应体的 role, 供下游使用
+          //   result.role = role
+          //   commit('SET_ROLES', role)
+          //   commit('SET_INFO', result)
+          //   commit('SET_NAME', { name: result.name, welcome: welcome() })
+          //   commit('SET_AVATAR', result.avatar)
+          //   // 下游
+          //   resolve(result)
+          // } else {
+          //   reject(new Error('getInfo: roles must be a non-null array !'))
+          // }
         }).catch(error => {
           reject(error)
         })

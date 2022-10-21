@@ -106,6 +106,7 @@ import md5 from 'md5'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha } from '@/api/login'
+import store from '@/store'
 
 export default {
   data () {
@@ -211,6 +212,11 @@ export default {
     },
     // 登录成功
     loginSuccess (res) {
+      if (res.code !== 0) {
+        this.isLoginError = true
+        return
+      }
+      store.commit('SET_ROUTERS', [])
       this.$router.push({ path: '/' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {

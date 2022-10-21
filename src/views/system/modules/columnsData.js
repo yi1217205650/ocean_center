@@ -1,6 +1,18 @@
-import store from '@/store/index'
-const roleList = store.state.user.roleList
-const statusList = ['异常', '正常']
+// 用户列表搜索状态map
+const statusList = [
+  {
+    name: '全部',
+    id: -1
+  },
+  {
+    name: '禁用',
+    id: 0
+  },
+  {
+    name: '启用',
+    id: 1
+  }
+]
 // 用户表格列
 const userColumns = [
   {
@@ -19,8 +31,8 @@ const userColumns = [
     dataIndex: 'roles',
     width: '100px',
     align: 'center',
-    searchMap: roleList,
-    searchType: 1,
+    searchMap: [],
+    searchType: -1,
     scopedSlots: { customRender: 'roles' }
   },
   {
@@ -37,7 +49,7 @@ const userColumns = [
     title: '最近在线',
     dataIndex: 'updated_at',
     width: '180px',
-    searchType: 2
+    searchType: -1
   },
   {
     title: '状态',
@@ -88,7 +100,7 @@ const roleColumns = [
     scopedSlots: { customRender: 'action' }
   }
 ]
-
+// 角色菜单权限表
 const roleDrawColumns = [
   {
     title: '模块',
@@ -108,12 +120,12 @@ const roleDrawColumns = [
     title: '页面',
     dataIndex: 'page',
     scopedSlots: { customRender: 'page' }
-  },
-  {
-    title: '功能',
-    dataIndex: 'actions',
-    scopedSlots: { customRender: 'actions' }
   }
+  // {
+  //   title: '功能',
+  //   dataIndex: 'actions',
+  //   scopedSlots: { customRender: 'actions' }
+  // }
 ]
 
-export { roleList, userColumns, statusList, roleColumns, roleDrawColumns }
+export { userColumns, roleColumns, roleDrawColumns }

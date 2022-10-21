@@ -1,25 +1,25 @@
 <template>
   <div class="antv-chart-mini">
     <div class="chart-wrapper" :style="{ height: 46 }">
-      <v-chart :force-fit="true" :height="height" :data="data" :padding="[36, 0, 18, 0]">
+      <v-chart :force-fit="true" :height="height" :data="data" :padding="[36, 0, 18, 0]" :scale="scale">
         <v-tooltip />
-        <v-smooth-area position="x*y" />
+        <v-smooth-area position="date*value" />
       </v-chart>
     </div>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
-const data = []
-const beginDay = new Date().getTime()
+// import moment from 'moment'
+// const data = []
+// const beginDay = new Date().getTime()
 
-for (let i = 0; i < 10; i++) {
-  data.push({
-    x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
-    y: Math.round(Math.random() * 10)
-  })
-}
+// for (let i = 0; i < 10; i++) {
+//   data.push({
+//     x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
+//     y: Math.round(Math.random() * 10)
+//   })
+// }
 
 const tooltip = [
   'x*y',
@@ -28,21 +28,22 @@ const tooltip = [
     value: y
   })
 ]
+
 const scale = [{
-  dataKey: 'x',
-  min: 2
-}, {
-  dataKey: 'y',
-  title: '时间',
-  min: 1,
-  max: 22
+  dataKey: 'value',
+  alias: '带宽'
 }]
 
 export default {
   name: 'MiniArea',
+  props: {
+    data: {
+      type: Array,
+      required: true
+    }
+  },
   data () {
     return {
-      data,
       tooltip,
       scale,
       height: 100

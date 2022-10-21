@@ -1,17 +1,18 @@
 import request from '@/utils/request'
 
 const api = {
-  host: '/host/list',
-  hostDetail: '/host/detail',
-  operHost: '/host/oper',
-  editHost: '/host/edit'
+  list: '/cmdb/list',
+  add: '/cmdb/create',
+  update: '/cmdb/update',
+  delete: '/cmdb/delete',
+  detail: '/cmdb/detail'
 }
 
 export default api
 // 主机列表
 export function getHostList (parameter) {
     return request({
-        url: api.host,
+        url: api.list,
         method: 'get',
         params: parameter
     })
@@ -19,24 +20,32 @@ export function getHostList (parameter) {
 // 主机详情
 export function getHostDetail (parameter) {
     return request({
-        url: api.hostDetail,
+        url: api.detail,
         method: 'get',
         params: parameter
     })
 }
-// 删除/上机/下机
-export function operHost (parameter) {
+// 添加主机
+export function addHost (parameter) {
     return request({
-        url: api.operHost,
-        method: 'get',
-        params: parameter
+        url: api.add,
+        method: 'post',
+        data: parameter
     })
 }
-// 新增/编辑主机
-export function editHost (parameter) {
+// 更新主机
+export function updateHost (parameter) {
     return request({
-        url: api.editHost,
-        method: 'get',
-        params: parameter
+        url: api.update,
+        method: 'post',
+        data: parameter
+    })
+}
+// 删除主机
+export function deleteHost (parameter) {
+    return request({
+        url: api.delete,
+        method: 'post',
+        data: parameter
     })
 }

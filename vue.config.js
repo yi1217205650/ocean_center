@@ -94,7 +94,7 @@ const vueConfig = {
     loaderOptions: {
       less: {
         modifyVars: {
-          // less vars，customize ant design theme
+          // less vars，customize theme
 
           // 'primary-color': '#F5222D',
           // 'link-color': '#F5222D',

@@ -8,8 +8,8 @@
     @cancel="() => { $emit('cancel') }"
   >
     <a-spin :spinning="loading">
-      <div v-if="model && model.id" class="avatarBox">
-        <a-upload
+      <div v-if="model && model.id && model.avatar != ''" class="avatarBox">
+        <!-- <a-upload
           modfileListel="avatar"
           list-type="picture"
           :max-count="1"
@@ -18,12 +18,12 @@
           :show-upload-list="false"
           :before-upload="beforeUpload"
           @change="handleChange"
-        >
+        > -->
           <a-avatar :size="120" :src="model.avatar" />
-        </a-upload>
+        <!-- </a-upload>
         <div class="avatarEditBox">
           <div class="avatarEdit">编辑</div>
-        </div>
+        </div> -->
       </div>
       <a-form :form="form" v-bind="formLayout">
         <!-- 检查是否有 id 并且大于0，大于0是修改。其他是新增，新增不显示主键ID -->
@@ -40,8 +40,11 @@
           <a-input v-decorator="['username', {rules: [{required: true, min: 1}]}]" />
         </a-form-item>
         <a-form-item label="登录密码">
-          <a-input v-if="model && model.id" type="password" v-decorator="['password']" disabled/>
+          <a-input v-if="model && model.id && !reset" type="password" v-decorator="['password']" disabled/>
           <a-input-password v-else v-decorator="['password']"/>
+          <div v-if="!reset && model" class="reset-bar">
+            <div class="reset-text" @click="resetPwd">重置密码</div>
+          </div>
         </a-form-item>
         <a-form-item label="邮箱">
           <a-input v-decorator="['email', {rules: [{ type: 'email', message: '请输入有效的邮箱!'}] }]"/>
@@ -50,11 +53,11 @@
           <a-input v-decorator="['telephone']"/>
         </a-form-item>
         <a-form-item label="角色">
-          <!-- <a-select v-decorator="['role']">
-            <a-select-option v-for="(item, index) in roleList" :key="index" :value="index">
-              {{ item.text }}
+          <a-select v-decorator="['role']">
+            <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.id">
+              {{ item.name }}
             </a-select-option>
-          </a-select> -->
+          </a-select>
         </a-form-item>
         <a-form-item label="状态">
           <a-select v-decorator="['status', { initialValue: 1 }]">
@@ -70,7 +73,6 @@
 
 <script>
 import pick from 'lodash.pick'
-import { roleList, statusList } from './columnsData'
 
 // 表单字段
 const fields = ['avatar', 'id', 'username', 'name', 'password', 'role', 'email', 'telephone', 'status']
@@ -94,11 +96,13 @@ export default {
     model: {
       type: Object,
       default: () => null
+    },
+    roleList: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
-    this.roleList = roleList
-    this.statusList = statusList
     this.formLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -110,26 +114,38 @@ export default {
       }
     }
     return {
+      reset: false,
+      statusList: ['禁用', '启用'],
       form: this.$form.createForm(this)
     }
   },
   computed: {
     title () {
-      return this.model && this.model.uid ? '编辑用户' : '新建用户'
+      return this.model && this.model.id ? '编辑用户' : '新建用户'
+    }
+  },
+  watch: {
+    visible (val) {
+      if (val) {
+        this.reset = false
+      }
     }
   },
   created () {
-    console.log('custom modal created')
     // 防止表单未注册
     fields.forEach(v => this.form.getFieldDecorator(v))
 
     // 当 model 发生改变时，为表单设置值
     this.$watch('model', () => {
-      console.log(this.model)
+      console.log('新增/编辑用户', this.model)
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
   },
   methods: {
+    resetPwd () {
+      this.reset = true
+      this.form.setFieldsValue(this.form.setFieldsValue({ password: '' }))
+    },
     beforeUpload (file) {
       const isJpgOrPng = file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/png'
       if (!isJpgOrPng) {
@@ -185,5 +201,15 @@ export default {
     line-height: 30px;
     font-size: 16px;
     background-color: rgba(0, 0, 0, 0.6);
+  }
+  .reset-bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+  }
+  .reset-bar .reset-text{
+    color: #1890ff;
+    line-height: 20px;
+    padding-left: 10px;
   }
 </style>

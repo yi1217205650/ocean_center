@@ -31,7 +31,7 @@ export function addUser (parameter) {
     return request({
         url: api.addUser,
         method: 'post',
-        params: parameter
+        data: parameter
     })
 }
 
@@ -39,7 +39,7 @@ export function updateUser (parameter) {
     return request({
         url: api.editUser,
         method: 'post',
-        params: parameter
+        data: parameter
     })
 }
 
@@ -47,7 +47,7 @@ export function deleteUser (parameter) {
     return request({
         url: api.delUser,
         method: 'post',
-        params: parameter
+        data: parameter
     })
 }
 

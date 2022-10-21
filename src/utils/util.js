@@ -93,3 +93,8 @@ export function scorePassword (pass) {
 
   return parseInt(score)
 }
+
+// 获取区间的随机数
+export const getRandomBetween = (min, max) => {
+  return parseInt(Math.random() * (max - min + 1) + min, 10)
+}

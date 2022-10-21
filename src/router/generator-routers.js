@@ -46,7 +46,6 @@ const constantRouterComponents = {
   Exception404: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404'),
   Exception500: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500')
 
-  // 'TestWork': () => import(/* webpackChunkName: "TestWork" */ '@/views/dashboard/TestWork')
 }
 
 // 前端未找到页面路由（固定不用改）
@@ -69,10 +68,6 @@ const rootRouter = {
   children: []
 }
 
-// export const generatorStaticRouter = () => {
-
-// }
-
 /**
  * 动态生成菜单
  * @param token
@@ -83,15 +78,15 @@ export const generatorDynamicRouter = token => {
     loginService
       .getCurrentUserNav(token)
       .then(res => {
-        console.log('generatorDynamicRouter response:', res)
-        const result = res.data
+        // console.log('generatorDynamicRouter response:', res)
+        const result = res.data.menus
         const menuNav = []
         const childrenNav = []
         //      后端数据, 根级树数组,  根级 PID
         listToTree(result, childrenNav, 0)
         rootRouter.children = childrenNav
         menuNav.push(rootRouter)
-        console.log('menuNav', menuNav)
+        // console.log('menuNav', menuNav)
         const routers = generator(menuNav)
         routers.push(notFoundRouter)
         console.log('routers', routers)

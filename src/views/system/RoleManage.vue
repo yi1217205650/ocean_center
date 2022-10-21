@@ -62,7 +62,6 @@
   </a-card>
 </template>
 <script>
-  import { Modal } from 'ant-design-vue'
   import { STable, Ellipsis } from '@/components'
   import { RoleForm, RolePermissionDrawer } from './modules'
   import { getRoleList, addRole, updateRole, deleteRole, getMenuList } from '@/api/system'
@@ -110,14 +109,16 @@
     },
     created () {
       getMenuList().then(res => {
-        const tree = []
-        listToTree(res.data, tree, 0)
-        this.childList = []
-        this.getChildMap(tree, this.childList)
+        if (res.code === 0) {
+          const tree = []
+          listToTree(res.data, tree, 0)
+          this.childList = []
+          this.getChildMap(tree, this.childList)
 
-        this.dataFilter(tree)
-        newTableData[newTableData.length - sum].rowSpan = sum
-        this.menuListTree = newTableData
+          this.dataFilter(tree)
+          newTableData[newTableData.length - sum].rowSpan = sum
+          this.menuListTree = newTableData
+        }
       })
     },
     filters: {
@@ -209,7 +210,7 @@
           id: record ? [record.id] : this.selectedRowKeys
         }
         const name = record ? `”${record.name}“` : '选中的'
-        Modal.confirm({
+        this.$confirm({
           title: '删除提示',
           content: `确定删除${name}角色吗？`,
           onOk: () => {
@@ -241,18 +242,23 @@
           param.describe = describe
         }
         funArr[type].fun(param).then(res => {
-          if (type === 0) {
-            this.$refs.table.clearSelected()
+          if (res.code === 0) {
+            if (type === 0) {
+              this.$refs.table.clearSelected()
+            } else {
+              this.visible = false
+              this.mdl = null
+              this.confirmLoading = false
+              const form = this.$refs.createModal.form
+              // 重置表单数据
+              form.resetFields()
+            }
+            // 刷新表格
+            this.$refs.table.refresh()
+            this.$message.info(`${funArr[type].title}成功`)
           } else {
-            this.visible = false
-            this.confirmLoading = false
-            const form = this.$refs.createModal.form
-            // 重置表单数据
-            form.resetFields()
+            this.$message.error(res.msg)
           }
-          // 刷新表格
-          this.$refs.table.refresh()
-          this.$message.info(`${funArr[type].title}成功`)
         }).catch(err => {
           console.log(err)
           this.confirmLoading = false
@@ -280,6 +286,6 @@
 </script>
 <style>
   .color-red{
-    color: red;
+    color: #F04864;
   }
 </style>

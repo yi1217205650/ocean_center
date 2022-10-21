@@ -18,7 +18,7 @@
         <a-space>
           <img src="@/assets/logo.png" />
           <!-- <img src="@/assets/logo-long2.png" style="width: 100px; height: 50px;"/> -->
-          <h1>{{ title }}</h1>
+          <h1 v-if="!collapsed">{{ title }}</h1>
         </a-space>
       </div>
     </template>
@@ -28,7 +28,7 @@
     <template v-slot:headerContentRender>
       <div>
         <a-tooltip title="刷新页面">
-          <a-icon type="reload" style="font-size: 18px;cursor: pointer;" @click="() => { $message.info('只是一个DEMO') }" />
+          <a-icon type="reload" style="font-size: 18px;cursor: pointer;" @click="() => { $router.go(0) }" />
         </a-tooltip>
       </div>
     </template>

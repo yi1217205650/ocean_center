@@ -132,7 +132,7 @@
                 </div>
               </a-col>
               <a-col :xs="24" :sm="12" :style="{ marginBottom: ' 24px'}">
-                <number-info :total="2.7" :sub-total="26.2" status="down">
+                <number-info :total="2300" :sub-total="26.2" status="down">
                   <span slot="subtitle">
                     <span>{{ $t('dashboard.analysis.per-capita-search') }}</span>
                     <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
