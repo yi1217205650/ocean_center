@@ -67,14 +67,15 @@
         :scroll="{ x: 2000,y: 500 }" >
         <!-- 通过插槽修改每列的样式 -->
         <span v-for="item in slotsList" :key="item.dataIndex" :slot="item.scopedSlots.customRender" slot-scope="text">
-          <!-- 运营商 镜像版本 mac地址 显示多个 -->
-          <span v-if="item.dataIndex == 'isp' || item.dataIndex == 'businesses' || item.dataIndex == 'nic'">
+          <!-- 运营商 mac地址 业务部署显示多个 -->
+          <span v-if="item.dataIndex == 'businesses'">
             <div v-for="textItem in text" :key="textItem.id">
-              <span v-if="item.dataIndex == 'isp'">{{ textItem.province }}{{ textItem.isp ? '-' + textItem.isp : '' }}</span>
-              <span v-else-if="item.dataIndex == 'businesses'">{{ textItem.name }}</span>
-              <span v-else>{{ textItem.mac }}</span>
+              <!-- <span v-if="item.dataIndex == 'isp'">{{ textItem.province }}{{ textItem.isp ? '-' + textItem.isp : '' }}</span> -->
+              <span>{{ textItem.name }}</span>
+              <!-- <span v-else>{{ textItem.mac }}</span> -->
             </div>
           </span>
+          <!-- <span v-if="item.dataIndex == 'isp' || item.dataIndex == 'nic'"></span> -->
           <!-- 其他插槽 -->
           <span v-else :class="[item.dataIndex == 'networkStatus' ? 'underline-text status-color' + text : '', item.dataIndex == 'processState' ? 'process-color' + text : '']">
             {{ item.searchMap[text] }}
@@ -110,7 +111,7 @@
   import { getHostList, addHost, updateHost, deleteHost } from '@/api/assets'
   import { CreateForm, HostDetailDrawer } from './modules'
   import { columns } from './modules/hostColumns'
-  import Mock from 'mockjs2'
+  // import Mock from 'mockjs2'
 
   // 搜索项
   const searchColumns = columns.filter((item, index) => {
@@ -177,6 +178,9 @@
       // 新建或配置
       handleAddOrEdit (record) {
         this.visible = true
+        if (record) {
+          record.hostname = record.system.hostname || ''
+        }
         this.mdl = record || null
       },
       // 详细信息
@@ -213,26 +217,43 @@
             }
             // 客户id
             values.customerId = parseInt(values.customerId)
+            values.reportBandwidth = parseInt(values.reportBandwidth)
             // 调用接口
             const type = values.id ? 2 : 1
-            if (type === 1) {
-              values.area = Mock.Random.region()
-              const isp = []
-              const len = Mock.mock('@integer(1, 3)')
-              const ispMap = ['移动', '电信', '联通']
-              for (let index = 0; index < len; index++) {
-                const cityData = Mock.Random.city(true).split(' ')
-                isp.push({
-                  ip: Mock.mock('@ip'),
-                  province: cityData[0],
-                  city: cityData[1],
-                  isp: ispMap[Mock.mock('@integer(0, 2)')]
-                })
+            // if (type === 1) {
+            //   values.area = Mock.Random.region()
+            //   const isp = []
+            //   const len = Mock.mock('@integer(1, 3)')
+            //   const ispMap = ['移动', '电信', '联通']
+            //   for (let index = 0; index < len; index++) {
+            //     const cityData = Mock.Random.city(true).split(' ')
+            //     isp.push({
+            //       ip: Mock.mock('@ip'),
+            //       province: cityData[0],
+            //       city: cityData[1],
+            //       isp: ispMap[Mock.mock('@integer(0, 2)')]
+            //     })
+            //   }
+            //   values.isp = isp
+            //   console.log(isp)
+            // }
+              // 编辑用户 把编辑的部分更新到原有的数据上一起提交
+              if (type === 2) {
+                const newParam = this.mdl
+                // newParam.machineName = values.machineName
+                newParam.machineId = values.machineId
+                newParam.idc = values.idc
+                newParam.businesses = values.businesses
+                newParam.deploymentType = values.deploymentType
+                newParam.networkType = values.networkType
+                newParam.reportBandwidth = values.reportBandwidth
+                newParam.billing = values.billing
+                newParam.supplier = values.supplier
+                newParam.owner = values.owner
+                newParam.customerId = values.customerId
+                values = newParam
               }
-              values.isp = isp
-              console.log(isp)
-            }
-            this.handleItemOper(type, values)
+              this.handleItemOper(type, values)
           } else {
             this.confirmLoading = false
             this.$message.error(values.name ? '修改失败' : '新增失败')
@@ -243,7 +264,7 @@
       handleDel () {
         this.$confirm({
           title: '删除提示',
-          content: '确定删除选中用户吗',
+          content: '确定删除选中主机吗',
           onOk: () => {
             const param = {
               id: this.selectedRowKeys
@@ -269,21 +290,6 @@
             fun: updateHost
           }
         ]
-        // 编辑用户 把编辑的部分更新到原有的数据上一起提交
-        if (type === 2) {
-          const newParam = this.mdl
-          newParam.machineName = param.machineName
-          newParam.machineId = param.machineId
-          newParam.idc = param.idc
-          newParam.businesses = param.businesses
-          newParam.deploymentType = param.deploymentType
-          newParam.networkType = param.networkType
-          newParam.billing = param.billing
-          newParam.supplier = param.supplier
-          newParam.owner = param.owner
-          newParam.customerId = param.customerId
-          param = newParam
-        }
         funArr[type].fun(param).then(res => {
           if (res.code === 0) {
             if (type === 0) {

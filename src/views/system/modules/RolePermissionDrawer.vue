@@ -192,6 +192,7 @@
       },
       // 移除选中的ID
       removeMenuId (id) {
+        id = parseInt(id)
         const index = this.selectMenuId.indexOf(id)
         if (index !== -1) {
           this.selectMenuId.splice(index, 1)
@@ -251,7 +252,6 @@
           return { id: item }
         })
         param.permissions[0].menus = ids
-
         // // action id
         // const permissionsList = this.selectAction.map(item => {
         //   const actions = []

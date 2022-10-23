@@ -1,7 +1,7 @@
 <template>
   <div :class="wrpCls">
     <avatar-dropdown :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
-    <select-lang :class="prefixCls" />
+    <!-- <select-lang :class="prefixCls" /> -->
     <!-- <span><a-icon type="logout-o" />{{ $t('menu.account.logout') }}</span> -->
   </div>
 </template>

@@ -14,14 +14,14 @@
             <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
           </a-form-item>
           <a-row :gutter="40">
-            <a-col :span="12">
+            <a-col :span="12" v-show="model && model.id">
               <a-form-item label="节点名">
-                <a-input v-decorator="['machineName', {rules: [{required: true}]}]" />
+                <a-input v-decorator="['hostname']" disabled />
               </a-form-item>
             </a-col>
             <a-col :span="12">
               <a-form-item label="节点ID">
-                <a-input v-decorator="['machineId', {rules: [{required: true}]}]" />
+                <a-input v-decorator="['machineId', {rules: [{required: true}]}]" :disabled="model && model.id != ''"/>
               </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -58,6 +58,11 @@
                     {{ item }}
                   </a-select-option>
                 </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="上报带宽">
+                <a-input type="number" suffix="G" v-decorator="['reportBandwidth', {rules: [{required: true}]}]" />
               </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -119,8 +124,8 @@
   import { idcMap, deploymentTypeMap, networkTypeMap, feeStateMap,
     feeRulesMap, feeModelMap, billingCycleMap, businessesMap } from './hostColumns'
   // 表单数据项
-  const fields = ['id', 'machineName', 'machineId', 'idc', 'businessName', 'deploymentType',
-  'networkType', 'billingRules', 'billingModel', 'billingCycle', 'supplier',
+  const fields = ['id', 'hostname', 'machineId', 'idc', 'businessName', 'deploymentType',
+  'networkType', 'reportBandwidth', 'billingRules', 'billingModel', 'billingCycle', 'supplier',
   'owner', 'customerId', 'comment']
 
   export default {
@@ -136,17 +141,13 @@
       model: {
         type: Object,
         default: () => null
+      },
+      hostname: {
+        type: String,
+        default: () => null
       }
     },
     data () {
-      this.idcMap = idcMap
-      this.deploymentTypeMap = deploymentTypeMap
-      this.networkTypeMap = networkTypeMap
-      this.feeStateMap = feeStateMap
-      this.feeRulesMap = feeRulesMap
-      this.feeModelMap = feeModelMap
-      this.billingCycleMap = billingCycleMap
-      this.businessesMap = businessesMap
       this.formLayout = {
         labelCol: {
           xs: { span: 24 },
@@ -158,6 +159,14 @@
         }
       }
       return {
+        idcMap,
+        deploymentTypeMap,
+        networkTypeMap,
+        feeStateMap,
+        feeRulesMap,
+        feeModelMap,
+        billingCycleMap,
+        businessesMap,
         form: this.$form.createForm(this)
       }
     },

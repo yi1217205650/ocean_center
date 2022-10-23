@@ -47,7 +47,7 @@ const businessesStateMap = ['下线', '正在初始化', '正在部署', '部署
 const columns = [
     {
         title: '节点名',
-        dataIndex: 'machineName',
+        dataIndex: 'system.hostname',
         fixed: 'left',
         align: 'center',
         width: '150px',
@@ -102,7 +102,8 @@ const columns = [
         dataIndex: 'isp',
         align: 'center',
         width: '120px',
-        scopedSlots: { customRender: 'isp' }
+        customRender: (text) => text.length > 0 ? text[0].province + (text.isp ? '-' + text.isp : '') : ''
+        // scopedSlots: { customRender: 'isp' }
     },
     {
         title: '网络状态',
@@ -186,7 +187,8 @@ const columns = [
         dataIndex: 'nic',
         align: 'center',
         width: '150px',
-        scopedSlots: { customRender: 'nic' }
+        customRender: (text) => text.length > 0 ? text[0].mac : ''
+        // scopedSlots: { customRender: 'nic' }
     },
     {
         title: '上报带宽',
