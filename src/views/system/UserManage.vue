@@ -182,7 +182,7 @@
             } else {
               param.status = type === 1 ? 1 : 0
             }
-            this.handleItemOper(type === 0 ? 0 : 2, param, 1)
+            this.handleItemOper(type === 0 ? 0 : 2, param)
           },
           onCancel () {}
         })
@@ -217,6 +217,23 @@
               ]
             }
             const type = values.id ? 2 : 1
+            if (type === 1) {
+              values.password = md5(values.password || values.username)
+            } else {
+               // 编辑用户 把编辑的部分更新到原有的数据上一起提交
+              const avatar = 'https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png'
+              const param = this.mdl
+              param.avatar = values.avatar || avatar
+              param.id = values.id
+              param.username = values.username
+              param.name = values.name
+              param.password = values.password !== param.password ? md5(values.password) : param.password
+              param.roles = values.roles
+              param.email = values.email
+              param.telephone = values.telephone
+              param.status = values.status
+              values = param
+            }
             this.handleItemOper(type, values)
           } else {
             this.confirmLoading = false
@@ -224,7 +241,7 @@
         })
       },
       // type 0 删除  1添加 2 编辑
-      handleItemOper (type, param, changeStatus = 0) {
+      handleItemOper (type, param) {
         const funArr = [
           {
             title: '删除',
@@ -239,23 +256,6 @@
             fun: updateUser
           }
         ]
-        // 编辑用户 把编辑的部分更新到原有的数据上一起提交
-        if (type === 2 && changeStatus === 0) {
-          const { avatar, id, username, name, password, roles, email, telephone, status } = { ...param }
-          param = this.mdl
-          param.avatar = avatar
-          param.id = id
-          param.username = username
-          param.name = name
-          param.password = password !== param.password ? md5(password) : param.password
-          param.roles = roles
-          param.email = email
-          param.telephone = telephone
-          param.status = status
-        }
-        if (type === 1) {
-          param.password = md5(param.password || param.username)
-        }
         funArr[type].fun(param).then(res => {
           if (res.code === 0) {
             if (type === 0) {

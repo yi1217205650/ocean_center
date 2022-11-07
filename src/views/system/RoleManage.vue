@@ -68,7 +68,7 @@
   import { roleColumns } from './modules/columnsData'
   import { listToTree } from '@/router/generator-routers'
 
-  const newTableData = []
+  let newTableData = []
   let sum = 0
   let nextIndex = 0
 
@@ -114,7 +114,9 @@
           listToTree(res.data, tree, 0)
           this.childList = []
           this.getChildMap(tree, this.childList)
-
+          newTableData = []
+          sum = 0
+          nextIndex = 0
           this.dataFilter(tree)
           newTableData[newTableData.length - sum].rowSpan = sum
           this.menuListTree = newTableData

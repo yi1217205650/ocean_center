@@ -51,5 +51,14 @@ export default {
     'menu.system.user': '用户管理',
     'menu.system.role': '角色管理',
     'menu.system.router': '路由管理',
-    'menu.system.log': '日志管理'
+    'menu.system.log': '日志管理',
+    // 后期加的
+    'menu.cost-center': '成本中心',
+    'menu.monitoring-alarms': '监控告警',
+    'menu.automated': '自动化管理',
+    'menu.big-data': '大数据分析',
+    'menu.big-data.outline': '离线分析',
+    'menu.big-data.inline': '实时分析',
+    'menu.scheduling-sys': '调度系统',
+    'menu.customer-manager': '客户管理'
 }

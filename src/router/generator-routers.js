@@ -13,6 +13,7 @@ const constantRouterComponents = {
   '403': () => import(/* webpackChunkName: "error" */ '@/views/exception/403'),
   '404': () => import(/* webpackChunkName: "error" */ '@/views/exception/404'),
   '500': () => import(/* webpackChunkName: "error" */ '@/views/exception/500'),
+  Building: () => import('@/views/building'),
 
   // 仪表大盘
   Dashboard: () => import('@/views/dashboard'),
