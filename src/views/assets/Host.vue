@@ -11,9 +11,8 @@
                 <a-form-item :label="item.searchTitle || item.title">
                   <!-- 下拉选择器 -->
                   <a-select v-if="item.searchType == 2" v-model="queryParam[item.dataIndex]" placeholder="">
-                    <a-select-option v-for="(value, index) in item.searchMap.length > 0 ? item.searchMap : 2" :key="index" :value="index">
-                      <span v-if="item.searchMap.length > 0">{{ value }}</span>
-                      <span v-else>{{ item.title + '--' +value }}</span>
+                    <a-select-option v-for="(value, index) in item.searchMap" :key="index" :value="index">
+                      <span>{{ value }}</span>
                     </a-select-option>
                   </a-select>
                   <!-- 时间选择器 -->

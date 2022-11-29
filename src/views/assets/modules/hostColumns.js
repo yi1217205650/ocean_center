@@ -1,27 +1,27 @@
 // 流程状态
-const processStateMap = ['未部署', '任务已部署', '计费中']
+const processStateMap = { '0': '未部署', '1': '任务已部署', '2': '计费中' }
 // ip协议栈
-const ipStackMap = ['IPV4', 'IPV6', '双栈']
+const ipStackMap = { '0': 'IPV4', '1': 'IPV6', '2': '双栈' }
 // 是否IDC
-const idcMap = ['非IDC', 'IDC']
+const idcMap = { '0': '非IDC', '1': 'IDC' }
 // 网络状态
-const networkStatusMap = ['离线', '在线']
+const networkStatusMap = { '0': '离线', '1': '在线' }
 // 部署方式
-const deploymentTypeMap = ['裸机', '容器']
+const deploymentTypeMap = { '0': '裸机', '1': '容器' }
 // 测试结果
-const evaluationResMap = ['待测试', '测试中', '测试通过', '未通过']
+const evaluationResMap = { '0': '待测试', '1': '测试中', '2': '测试通过', '3': '未通过', '4': '测试通过' }
 // 网络类型
-const networkTypeMap = ['固定IP', '拨号']
+const networkTypeMap = { '0': '固定IP', '1': '拨号' }
 // 计费状态
-const feeStateMap = ['未计费', '计费中']
+const feeStateMap = { '0': '未计费', '1': '计费中' }
 // 计费规则
-const feeRulesMap = ['日95', '晚95', '买断', '月95', '保底']
+const feeRulesMap = { '0': '日95', '1': '晚95', '2': '买断', '3': '月95', '4': '保底' }
 // 价格模式
-const feeModelMap = ['移动公网', '移动内网', '移动城域网', '电联公网']
+const feeModelMap = { '0': '移动公网', '1': '移动内网', '2': '移动城域网', '3': '电联公网' }
 // 结算周期
-const billingCycleMap = ['日结', '月结']
+const billingCycleMap = { '0': '日结', '1': '月结' }
 // 地区
-const areaMap = ['华东', '华南', '华北', '西南', '东北', '西北']
+const areaMap = { '0': '华东', '1': '华南', '2': '华北', '3': '西南', '4': '东北', '5': '西北' }
 // 业务名
 const businessesMap = [
     {
@@ -145,19 +145,18 @@ const columns = [
     {
         title: '硬件',
         children: [
-        // {
-        //     title: '机型',
-        //     dataIndex: 'model',
-        //     align: 'center',
-        //     width: '100px',
-        //     searchType: 0
-        // },
         {
             title: 'CPU',
             dataIndex: 'cpu',
             align: 'center',
             width: '100px',
             customRender: (text) => text.physicalCount + '核'
+        },
+        {
+            title: 'GPU',
+            dataIndex: 'gpu',
+            align: 'center',
+            width: '100px'
         },
         {
             title: '内存',

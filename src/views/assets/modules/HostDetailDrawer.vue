@@ -108,6 +108,8 @@
               </a-col>
             </a-row>
           </a-descriptions-item>
+          <a-descriptions-item label="GPU" :span="2">
+          </a-descriptions-item>
           <a-descriptions-item label="内存" :span="2">
             <a-space direction="vertical">
               <div>大小：{{ parseInt(model.mem.total / 1000000000) }}G</div>
