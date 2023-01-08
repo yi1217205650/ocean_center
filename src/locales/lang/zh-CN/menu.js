@@ -45,6 +45,8 @@ export default {
     'menu.assets.database.mysql': 'MySQL',
     'menu.assets.database.redis': 'Redis',
     'menu.billing': '带宽计费',
+    'menu.billing.customer': '客户结算',
+    'menu.billing.user': '用户结算',
     'menu.batch': '批量执行',
     'menu.monitoring': '监控中心',
     'menu.system': '系统管理',
@@ -60,5 +62,8 @@ export default {
     'menu.big-data.outline': '离线分析',
     'menu.big-data.inline': '实时分析',
     'menu.scheduling-sys': '调度系统',
-    'menu.customer-manager': '客户管理'
+    'menu.customer-manager': '客户管理',
+    'menu.settlement': '结算管理',
+    'menu.settlement.customer': '客户结算',
+    'menu.settlement.user': '用户结算'
 }

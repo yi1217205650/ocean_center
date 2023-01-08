@@ -255,9 +255,9 @@ const columns = [
     },
     {
         title: '客户ID',
-        dataIndex: 'customerId',
+        dataIndex: 'uid',
         align: 'center',
-        width: '100px',
+        width: '150px',
         searchType: 1
     },
     {

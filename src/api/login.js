@@ -5,7 +5,7 @@ const userApi = {
   Logout: '/auth/logout',
 
   ForgePassword: '/auth/forge-password',
-  SendSms: '/account/sms',
+  SendSms: '/auth/vcode',
   // get my info
   UserInfo: '/user/info',
   UserMenu: '/user/menu'

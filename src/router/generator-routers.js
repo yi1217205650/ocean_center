@@ -24,7 +24,8 @@ const constantRouterComponents = {
   Redis: () => import('@/views/assets/database/Redis'),
 
   // 带宽计费
-  Billing: () => import('@/views/billing'),
+  Bcustomer: () => import('@/views/billing/customer'),
+  Buser: () => import('@/views/billing/user'),
 
   // 批量执行
   Batch: () => import('@/views/batch'),
@@ -37,6 +38,10 @@ const constantRouterComponents = {
   RoleManage: () => import('@/views/system/RoleManage'),
   RouterManage: () => import('@/views/system/RouterManage'),
   LogManage: () => import('@/views/system/LogManage'),
+
+  // 结算管理
+  Scustomer: () => import('@/views/settlement/customer'),
+  Suser: () => import('@/views/settlement/user'),
 
   // result
   ResultSuccess: () => import(/* webpackChunkName: "result" */ '@/views/result/Success'),
