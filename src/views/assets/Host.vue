@@ -76,7 +76,7 @@
           </span>
           <!-- <span v-if="item.dataIndex == 'isp' || item.dataIndex == 'nic'"></span> -->
           <!-- 其他插槽 -->
-          <span v-else :class="[item.dataIndex == 'networkStatus' ? 'underline-text status-color' + text : '', item.dataIndex == 'processState' ? 'process-color' + text : '']">
+          <span v-else :class="[item.dataIndex == 'networkStatus' ? 'status-color' + text : '', item.dataIndex == 'processState' ? 'process-color' + text : '']">
             {{ item.searchMap[text] }}
           </span>
         </span>
@@ -210,13 +210,19 @@
             // 计费
             values.billing = {
               state: values.id ? this.mdl.billing.state : 0,
-              rule: values.billingRules,
+              rule: values.billingrule,
               model: values.billingModel,
               cycle: values.billingCycle
             }
-            // 客户id
-            values.customerId = parseInt(values.customerId)
+            // 把数据变成整型
+            values.idc = parseInt(values.idc)
+            // values.customerId = parseInt(values.customerId)
             values.reportBandwidth = parseInt(values.reportBandwidth)
+            values.deploymentType = parseInt(values.deploymentType)
+            values.networkType = parseInt(values.networkType)
+            values.billing.cycle = parseInt(values.billing.cycle)
+            values.billing.model = parseInt(values.billing.model)
+            values.billing.rule = parseInt(values.billing.rule)
             // 调用接口
             const type = values.id ? 2 : 1
             // if (type === 1) {
@@ -249,7 +255,7 @@
                 newParam.billing = values.billing
                 newParam.supplier = values.supplier
                 newParam.owner = values.owner
-                newParam.customerId = values.customerId
+                // newParam.customerId = values.customerId
                 values = newParam
               }
               this.handleItemOper(type, values)

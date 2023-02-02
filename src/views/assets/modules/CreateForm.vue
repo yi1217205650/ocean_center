@@ -14,11 +14,11 @@
             <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
           </a-form-item>
           <a-row :gutter="40">
-            <a-col :span="12" v-show="model && model.id">
+            <!-- <a-col :span="12" v-show="model && model.id">
               <a-form-item label="节点名">
                 <a-input v-decorator="['hostname']" disabled />
               </a-form-item>
-            </a-col>
+            </a-col> -->
             <a-col :span="12">
               <a-form-item label="节点ID">
                 <a-input v-decorator="['machineId', {rules: [{required: true}]}]" :disabled="model && model.id != ''"/>
@@ -102,11 +102,11 @@
                 <a-input v-decorator="['owner', {rules: [{required: true}]}]" />
               </a-form-item>
             </a-col>
-            <a-col :span="12">
+            <!-- <a-col :span="12">
               <a-form-item label="客户ID">
                 <a-input type="number" v-decorator="['customerId', { rules: [{required: true}]}]" />
               </a-form-item>
-            </a-col>
+            </a-col> -->
             <a-col :span="24">
               <a-form-item label="备注">
                 <a-textarea v-decorator="['comment']" :auto-size="{ minRows: 2, maxRows: 5 }"/>
@@ -126,7 +126,7 @@
   // 表单数据项
   const fields = ['id', 'hostname', 'machineId', 'idc', 'businessName', 'deploymentType',
   'networkType', 'reportBandwidth', 'billingRules', 'billingModel', 'billingCycle', 'supplier',
-  'owner', 'customerId', 'comment']
+  'owner', 'comment']
 
   export default {
     props: {
@@ -182,9 +182,12 @@
       this.$watch('model', () => {
         console.log('新增/编辑主机', this.model)
         if (this.model) {
-          this.model.billingRules = this.model.billing.rule
-          this.model.billingModel = this.model.billing.model
-          this.model.billingCycle = this.model.billing.cycle
+          this.model.idc = this.model.idc + ''
+          this.model.deploymentType = this.model.deploymentType + ''
+          this.model.networkType = this.model.networkType + ''
+          this.model.billingRules = this.model.billing.rule + ''
+          this.model.billingModel = this.model.billing.model + ''
+          this.model.billingCycle = this.model.billing.cycle + ''
           const businessName = []
           this.model.businesses.forEach((item, index) => {
             businessName.push(item.id)

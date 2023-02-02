@@ -23,7 +23,7 @@
           <a-col :md="!advanced && 6 || 24" :sm="24">
             <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
               <a-button type="primary" @click="handleSearch">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => this.queryParam = {status: -1}">重置</a-button>
+              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
               <a @click="toggleAdvanced" style="margin-left: 8px">
                 {{ advanced ? '收起' : '展开' }}
                 <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -129,7 +129,7 @@
         advanced: false,
         // 查询参数
         queryParam: {
-          status: -1
+          // status: -1
         },
         // 加载数据方法 必须为 Promise 对象
         loadData: parameter => {

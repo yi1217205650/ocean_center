@@ -45,14 +45,14 @@ const businessesMap = [
 const businessesStateMap = ['下线', '正在初始化', '正在部署', '部署完成', '服务中']
 // 主机列表表头
 const columns = [
-    {
-        title: '节点名',
-        dataIndex: 'system.hostname',
-        fixed: 'left',
-        align: 'center',
-        width: '150px',
-        searchType: 1
-    },
+    // {
+    //     title: '节点名',
+    //     dataIndex: 'system.hostname',
+    //     fixed: 'left',
+    //     align: 'center',
+    //     width: '150px',
+    //     searchType: 1
+    // },
     {
         title: '节点ID',
         dataIndex: 'machineId',
