@@ -16,10 +16,12 @@
     <template v-slot:menuHeaderRender>
       <div>
         <a-space>
+          <!-- <img v-if="!collapsed" src="@/assets/logo-name.png" style="width: 202px; height: 97px;"/>
+          <img v-else src="@/assets/logo.png" /> -->
           <img src="@/assets/logo.png" />
-          <!-- <img src="@/assets/logo-long2.png" style="width: 100px; height: 50px;"/> -->
           <h1 v-if="!collapsed">{{ title }}</h1>
         </a-space>
+
       </div>
     </template>
     <!-- 1.0.0+ 版本 pro-layout 提供 API,
